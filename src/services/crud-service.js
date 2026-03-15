@@ -43,7 +43,7 @@ class CrudService{
         }
     }
 
-    async update(){
+    async update(id, data){
         try {
             const response = await this.repository.update(id, data);
             return response;

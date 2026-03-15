@@ -1,56 +1,45 @@
 const {Flight} = require("../models");
 const {Op} = require("sequelize");
+const CrudRepositoty = require("./crud-repository");
 
-class FlightRepository{#createFilter(data){
-    const filter = {};
+class FlightRepository extends CrudRepositoty{
 
-    if(data.arrivalAirportId){
-        filter.arrivalAirportId = data.arrivalAirportId;
+    constructor(){
+        super(Flight);
     }
 
-    if(data.departureAirportId){
-        filter.departureAirportId = data.departureAirportId;
-    }
+    #createFilter(data){
+        const filter = {};
 
-    if(data.minPrice && data.maxPrice){
-        filter.price = {
-            [Op.between]: [data.minPrice, data.maxPrice]
-        };
-    } 
-    else if(data.minPrice){
-        filter.price = {
-            [Op.gte]: data.minPrice
-        };
-    } 
-    else if(data.maxPrice){
-        filter.price = {
-            [Op.lte]: data.maxPrice
-        };
-    }
-    return filter;
-    }
-    async createFlight(data){
-        try {
-            const flight = await Flight.create(data);
-            return flight;
-        } catch (error) {
-            console.log("Something went wrong in the repository layer");
-            throw error;
+        if(data.arrivalAirportId){
+            filter.arrivalAirportId = data.arrivalAirportId;
         }
-    }
-    async getFlight(flightId){
-        try {
-            const flight = await Flight.findByPk(flightId);
-            return flight;
-        } catch (error) {
-           console.log("Something went wrong in the repository layer");
-            throw error;
+
+        if(data.departureAirportId){
+            filter.departureAirportId = data.departureAirportId;
         }
+
+        if(data.minPrice && data.maxPrice){
+            filter.price = {
+                [Op.between]: [data.minPrice, data.maxPrice]
+            };
+        } 
+        else if(data.minPrice){
+            filter.price = {
+                [Op.gte]: data.minPrice
+            };
+        } 
+        else if(data.maxPrice){
+            filter.price = {
+                [Op.lte]: data.maxPrice
+            };
+        }
+        return filter;
     }
-    
-    async getAllFlights(data){
+    async getAll(data){
         try {
             const filter = this.#createFilter(data);
+            console.log(filter);
             const flights = await Flight.findAll({
                 where:filter
             });
@@ -60,7 +49,6 @@ class FlightRepository{#createFilter(data){
             throw error;
         }
     }
-
 }
 
 module.exports = FlightRepository;

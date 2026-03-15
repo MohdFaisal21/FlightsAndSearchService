@@ -1,15 +1,17 @@
 const {FlightRepository, AirplaneRepository} = require("../repository");
+const CrudService = require("./crud-service");
 
+const flightRepository = new FlightRepository();
 
-class FlightService{
+class FlightService extends CrudService{
     constructor(){
+        super(flightRepository);
         this.airplaneRepository = new AirplaneRepository();
-        this.fligtRepository = new FlightRepository();
     }
-    async createFlight(data){
+    async create(data){
         try {
-            const airplane = await this.airplaneRepository.getAirplane(data.airplaneId);
-            const flight = await this.fligtRepository.createFlight(
+            const airplane = await this.airplaneRepository.get(data.airplaneId);
+            const flight = await flightRepository.create(
                 {
                     ...data, 
                     totalSeats:airplane.capacity
@@ -21,9 +23,9 @@ class FlightService{
         }
     }
 
-    async getAllFligths(data){
+    async getAll(data){
         try {
-            const flights = this.fligtRepository.getAllFlights(data);
+            const flights = flightRepository.getAll(data);
             return flights;
         } catch (error) {
             console.log("Something went wrong in service layer");
@@ -31,6 +33,20 @@ class FlightService{
         }
     }
 
+    async update(id, data){
+        try {
+            const airplane = await this.airplaneRepository.get(data.airplaneId);
+            const flightData = {
+                    ...data, 
+                    totalSeats:airplane.capacity
+                };
+            const flight = await flightRepository.update(id, flightData);
+            return true;
+        } catch (error) {
+            console.log("Something went wrong in service layer");
+            throw error;
+        }
+    }
 }
 
 module.exports = FlightService;

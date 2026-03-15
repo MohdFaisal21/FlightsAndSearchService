@@ -1,18 +1,16 @@
-const {AirportService} = require("../services");
-const {SuccessCodes, ServerErrorCodes} = require("../utils/error-codes");
-const airportService = new AirportService();
+const {AirplaneService} = require("../services");
+const {SuccessCodes, ServerErrorCodes} = require("../utils/error-codes")
+const airplaneService = new AirplaneService();
 
-// Create new Airport
 const create = async function(req, res){
     try {
         let data = {
-            name: req.body.name,
-            cityId: req.body.cityId,
-            address: req.body.address
+            modelNumber: req.body.modelNumber,
+            capacity: req.body.capacity
         }
-        const response = await airportService.create(data);
+        const response = await airplaneService.create(data);
         res.status(SuccessCodes.CREATED).json({
-            message : "Successfully created an airport",
+            message : "Successfully created an airplane",
             err : {},
             data : response,
             success:true
@@ -23,19 +21,18 @@ const create = async function(req, res){
             data: {},
             success : false,
             err: error,
-            message : "cannot create a new Airport"
+            message : "cannot create a new airplane"
         })
     }
 }
 
-// Delete an Airport
 
 const destroy = async function(req, res){
     try {
         let {id} = req.params;
-        const response = await airportService.destroy(id);
+        const response = await airplaneService.destroy(id);
         res.status(SuccessCodes.OK).json({
-            message : "Successfully deleted",
+            message : "Successfully deleted an airplane",
             err : {},
             data : response,
             success:true
@@ -46,19 +43,39 @@ const destroy = async function(req, res){
             data: {},
             success : false,
             err: error,
-            message : "cannot delete an airport."
+            message : "cannot delete an airplane"
         })
     }
 }
 
-// Get An Airport
+
+const getAll = async function(req, res){
+    try {
+        const response = await airplaneService.getAll();
+        res.status(SuccessCodes.OK).json({
+            message : "Successfully fetched all the aeroplanes",
+            err : {},
+            data : response,
+            success:true
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
+            data: {},
+            success : false,
+            err: error,
+            message : "cannot fetch all the aeroplanes"
+        })
+    }
+}
+
 
 const get = async function(req, res){
     try {
         let {id} = req.params;
-        const response = await airportService.get(id);
+        const response = await airplaneService.get(id);
         res.status(SuccessCodes.OK).json({
-            message : "Successfully fetched an airport",
+            message : "Successfully fetched airplane",
             err : {},
             data : response,
             success:true
@@ -69,44 +86,23 @@ const get = async function(req, res){
             data: {},
             success : false,
             err: error,
-            message : "cannot fetched an Airport"
+            message : "cannot fetched an airplane"
         })
     }
 }
 
-// Get All the Airports
 
-const getAll = async function(req, res){
-    try {
-        const response = await airportService.getAll();
-        res.status(SuccessCodes.OK).json({
-            message : "Successfully fetched all the airports",
-            err : {},
-            data : response,
-            success:true
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
-            data: {},
-            success : false,
-            err: error,
-            message : "cannot fetched airports"
-        })
-    }
-}
 
-// update a airport
 const update = async function(req, res){
     try {
         let {id} = req.params;
         let data = {
-            name : req.body.name,
-            cityId:req.body.cityId
+            modelNumber  : req.body.modelNumber,
+            capacity : req.body.capacity
         }
-        const response = await airportService.update(id, data);
+        const response = await airplaneService.update(id, data);
         res.status(SuccessCodes.OK).json({
-            message : "Successfully updated",
+            message : "Successfully updated an airplane",
             err : {},
             data : response,
             success:true
@@ -117,14 +113,10 @@ const update = async function(req, res){
             data: {},
             success : false,
             err: error,
-            message : "cannot update an Airport"
+            message : "cannot update an airplane"
         })
     }
 }
-
-
-
-
 
 module.exports = {
     create,
